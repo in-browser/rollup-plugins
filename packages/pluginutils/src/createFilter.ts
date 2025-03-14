@@ -1,11 +1,73 @@
-import { resolve, posix, isAbsolute } from 'path';
-
+/* eslint-disable no-plusplus*/
+import { resolve, isAbsolute } from 'pathe';
 import pm from 'picomatch';
 
 import type { CreateFilter } from '../types';
 
 import ensureArray from './utils/ensureArray';
 import normalizePath from './normalizePath';
+
+const joinPath = (base: string, path: string) => {
+  // If the path contains '..' or '.', normalize the path first
+  if (path.includes('./') || path.includes('../') || path === '.' || path === '..') {
+    // Split path into segments
+    const segments = path.split('/');
+    const resultSegments = [];
+
+    // Track how many levels we need to go up from the base
+    let upCount = 0;
+
+    for (const segment of segments) {
+      if (segment === '..') {
+        // If we have segments in the result, pop the last one
+        if (resultSegments.length > 0) {
+          resultSegments.pop();
+        } else {
+          // If no segments left, we need to go up from the base
+          upCount++;
+        }
+      } else if (segment !== '.' && segment !== '') {
+        // If segment is not '.' or empty string, add it to the result
+        resultSegments.push(segment);
+      }
+    }
+
+    // Construct the final path
+    let finalPath = resultSegments.join('/');
+
+    // If we need to go up from the base, add the appropriate number of '../'
+    if (upCount > 0 && base) {
+      // Split the base into segments
+      const baseSegments = base.split('/');
+
+      // If we need to go up more levels than the base has, just keep the '../' prefix
+      if (upCount >= baseSegments.length) {
+        const remainingUpCount = upCount - baseSegments.length + 1;
+        const upPrefix = Array(remainingUpCount).fill('..').join('/');
+        finalPath = upPrefix + (finalPath ? `/${finalPath}` : '');
+        // We'll return early since we've gone beyond the base
+        return finalPath;
+      }
+      // Otherwise, adjust the base by removing the appropriate number of segments
+      base = baseSegments.slice(0, baseSegments.length - upCount).join('/');
+    }
+
+    path = finalPath;
+  }
+
+  // Remove trailing slashes
+  base = base.replace(/[/\\]+$/g, '');
+  // Remove leading slashes
+  path = path.replace(/^[/\\]+/g, '');
+
+  // If path is empty, return base directly
+  if (!path) return base;
+  // If base is empty, return path directly
+  if (!base) return path;
+
+  // Join paths with forward slash while preserving backslashes
+  return `${base}/${path}`;
+};
 
 function getMatcherString(id: string, resolutionBase: string | false | null | undefined) {
   if (resolutionBase === false || isAbsolute(id) || id.startsWith('**')) {
@@ -20,7 +82,8 @@ function getMatcherString(id: string, resolutionBase: string | false | null | un
   // 1. the basePath has been normalized to use /
   // 2. the incoming glob (id) matcher, also uses /
   // otherwise Node will force backslash (\) on windows
-  return posix.join(basePath, normalizePath(id));
+  // pathe `join` will normalize the \ to use /, which will make the regexp fail
+  return joinPath(basePath, normalizePath(id));
 }
 
 const createFilter: CreateFilter = function createFilter(include?, exclude?, options?) {

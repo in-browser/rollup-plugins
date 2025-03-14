@@ -1,4 +1,4 @@
-import { resolve as rawResolve } from 'path';
+import { resolve as rawResolve } from 'pathe';
 
 import test from 'ava';
 
