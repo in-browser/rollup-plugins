@@ -196,9 +196,9 @@ importers:
 
   packages/commonjs:
     dependencies:
-      '@rollup/pluginutils':
-        specifier: ^5.0.1
-        version: 5.0.1(rollup@4.0.0-24)
+      '@in-browser/rollup-pluginutils':
+        specifier: ^1.0.0
+        version: 1.0.0(rollup@4.0.0-24)
       estree-walker:
         specifier: ^2.0.2
         version: 2.0.2
@@ -1428,6 +1428,15 @@ packages:
   '@humanwhocodes/object-schema@1.2.1':
     resolution: {integrity: sha512-ZnQMnLV4e7hDlUvw8H+U8ASL02SS2Gn6+9Ac3wGGLIe7+je2AeAOxPY+izIPJDfFDb7eDjev0Us8MO1iFRN8hA==}
     deprecated: Use @eslint/object-schema instead
+
+  '@in-browser/rollup-pluginutils@1.0.0':
+    resolution: {integrity: sha512-I0lNKG36UmBpqUZ1UiLJIF5iXNbUtqQ6bo5UZnCUsgZBp0LgNKkmsgCz02TByssTW5Mk0D71cU9Zz97P0latiQ==}
+    engines: {node: '>=14.0.0'}
+    peerDependencies:
+      rollup: ^1.20.0||^2.0.0||^3.0.0||^4.0.0
+    peerDependenciesMeta:
+      rollup:
+        optional: true
 
   '@isaacs/cliui@8.0.2':
     resolution: {integrity: sha512-O8jcjabXaleOG9DQ0+ARXWZBTfnP4WNAqzuiJK7ll44AmxGKv/J2M4TPjxjY3znBCfvBXFzucm1twdyFybFqEA==}
@@ -5545,6 +5554,15 @@ snapshots:
   '@humanwhocodes/module-importer@1.0.1': {}
 
   '@humanwhocodes/object-schema@1.2.1': {}
+
+  '@in-browser/rollup-pluginutils@1.0.0(rollup@4.0.0-24)':
+    dependencies:
+      '@types/estree': 1.0.0
+      estree-walker: 2.0.2
+      pathe: 2.0.3
+      picomatch: 4.0.2
+    optionalDependencies:
+      rollup: 4.0.0-24
 
   '@isaacs/cliui@8.0.2':
     dependencies:
