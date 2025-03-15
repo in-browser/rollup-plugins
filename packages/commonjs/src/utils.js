@@ -1,6 +1,6 @@
 /* eslint-disable import/prefer-default-export */
 
-import { basename, dirname, extname, relative } from 'path';
+import { basename, dirname, extname, relative } from 'pathe';
 
 import { createFilter, makeLegalIdentifier } from '@rollup/pluginutils';
 

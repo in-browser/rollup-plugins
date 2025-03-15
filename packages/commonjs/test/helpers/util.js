@@ -1,10 +1,11 @@
 const path = require('path');
+const fs = require('fs');
 
 const commonjsPlugin = require('../..');
 
 function commonjs(options) {
   delete require.cache[require.resolve('../..')];
-  return commonjsPlugin(options);
+  return commonjsPlugin({ fileSystem: fs, cwd: process.cwd(), ...options });
 }
 
 function normalizePathSlashes(path) {

@@ -9,7 +9,12 @@ import {
 } from './helpers';
 import { resolveExtensions } from './resolve-id';
 
-export function getRequireResolver(extensions, detectCyclesAndConditional, currentlyResolving) {
+export function getRequireResolver(
+  extensions,
+  detectCyclesAndConditional,
+  currentlyResolving,
+  fileSystem
+) {
   const knownCjsModuleTypes = Object.create(null);
   const requiredIds = Object.create(null);
   const unconditionallyRequiredIds = Object.create(null);
@@ -172,7 +177,7 @@ export function getRequireResolver(extensions, detectCyclesAndConditional, curre
               (await rollupContext.resolve(source, parentId, {
                 skipSelf: false,
                 custom: { 'node-resolve': { isRequire: true } }
-              })) || resolveExtensions(source, parentId, extensions);
+              })) || resolveExtensions(source, parentId, extensions, fileSystem);
             currentlyResolvingForParent.delete(source);
             if (!resolved) {
               return { id: wrapId(source, EXTERNAL_SUFFIX), allowProxy: false };

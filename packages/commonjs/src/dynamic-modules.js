@@ -1,19 +1,19 @@
-import { existsSync, readFileSync, statSync } from 'fs';
-import { join, resolve, dirname } from 'path';
+import { join, resolve, dirname } from 'pathe';
 
-import getCommonDir from 'commondir';
+import { globSync } from 'glob';
 
-import { fdir } from 'fdir';
+import getCommonDir from './hacked-packages/commondir';
 
 import { getVirtualPathForDynamicRequirePath, normalizePathSlashes } from './utils';
 
-function getPackageEntryPoint(dirPath) {
+function getPackageEntryPoint(dirPath, fileSystem) {
   let entryPoint = 'index.js';
+  const fs = fileSystem;
 
   try {
-    if (existsSync(join(dirPath, 'package.json'))) {
+    if (fs.existsSync(join(dirPath, 'package.json'))) {
       entryPoint =
-        JSON.parse(readFileSync(join(dirPath, 'package.json'), { encoding: 'utf8' })).main ||
+        JSON.parse(fs.readFileSync(join(dirPath, 'package.json'), { encoding: 'utf8' })).main ||
         entryPoint;
     }
   } catch (ignored) {
@@ -23,37 +23,47 @@ function getPackageEntryPoint(dirPath) {
   return entryPoint;
 }
 
-function isDirectory(path) {
+function isDirectory(path, fileSystem) {
+  const fs = fileSystem;
   try {
-    if (statSync(path).isDirectory()) return true;
+    if (fs.statSync(path).isDirectory()) return true;
   } catch (ignored) {
     // Nothing to do here
   }
   return false;
 }
 
-export function getDynamicRequireModules(patterns, dynamicRequireRoot) {
+export function getDynamicRequireModules(patterns, dynamicRequireRoot, fileSystem) {
   const dynamicRequireModules = new Map();
   const dirNames = new Set();
-  for (const pattern of !patterns || Array.isArray(patterns) ? patterns || [] : [patterns]) {
+
+  if (!patterns || !fileSystem) {
+    return {
+      commonDir: null,
+      dynamicRequireModules
+    };
+  }
+
+  const patternsArray = Array.isArray(patterns) ? patterns : [patterns];
+
+  for (const pattern of patternsArray) {
     const isNegated = pattern.startsWith('!');
     const modifyMap = (targetPath, resolvedPath) =>
       isNegated
         ? dynamicRequireModules.delete(targetPath)
         : dynamicRequireModules.set(targetPath, resolvedPath);
-    // eslint-disable-next-line new-cap
-    for (const path of new fdir()
-      .withBasePath()
-      .withDirs()
-      .glob(isNegated ? pattern.substr(1) : pattern)
-      .crawl()
-      .sync()
-      .sort((a, b) => a.localeCompare(b, 'en'))) {
-      const resolvedPath = resolve(path);
+
+    const paths = globSync(isNegated ? pattern.substr(1) : pattern, {
+      fs: fileSystem
+    });
+    paths.sort((a, b) => a.localeCompare(b, 'en'));
+
+    for (const filePath of paths) {
+      const resolvedPath = resolve(filePath);
       const requirePath = normalizePathSlashes(resolvedPath);
-      if (isDirectory(resolvedPath)) {
+      if (isDirectory(resolvedPath, fileSystem)) {
         dirNames.add(resolvedPath);
-        const modulePath = resolve(join(resolvedPath, getPackageEntryPoint(path)));
+        const modulePath = resolve(join(resolvedPath, getPackageEntryPoint(filePath, fileSystem)));
         modifyMap(requirePath, modulePath);
         modifyMap(normalizePathSlashes(modulePath), modulePath);
       } else {

@@ -1,4 +1,23 @@
-import { dirname, extname, relative, resolve } from 'path';
+/**
+ * @rollup/plugin-commonjs - Browser Compatible Version
+ *
+ * When used in a browser environment, you need to pass an options.fileSystem object:
+ * Example:
+ * ```js
+ * import commonjs from '@rollup/plugin-commonjs';
+ *
+ * export default {
+ *   plugins: [
+ *     commonjs({
+ *       fileSystem: { ... }
+ *       cwd: '/'
+ *     })
+ *   ]
+ * };
+ * ```
+ */
+
+import { dirname, extname, relative, resolve } from 'pathe';
 
 import { createFilter } from '@rollup/pluginutils';
 
@@ -41,7 +60,9 @@ export default function commonjs(options = {}) {
     ignoreDynamicRequires,
     requireReturnsDefault: requireReturnsDefaultOption,
     defaultIsModuleExports: defaultIsModuleExportsOption,
-    esmExternals
+    esmExternals,
+    fileSystem,
+    cwd = '/'
   } = options;
   const extensions = options.extensions || ['.js'];
   const filter = createFilter(options.include, options.exclude);
@@ -72,12 +93,11 @@ export default function commonjs(options = {}) {
           typeof defaultIsModuleExportsOption === 'boolean' ? defaultIsModuleExportsOption : 'auto';
 
   const dynamicRequireRoot =
-    typeof options.dynamicRequireRoot === 'string'
-      ? resolve(options.dynamicRequireRoot)
-      : process.cwd();
+    typeof options.dynamicRequireRoot === 'string' ? resolve(options.dynamicRequireRoot) : cwd;
   const { commonDir, dynamicRequireModules } = getDynamicRequireModules(
     options.dynamicRequireTargets,
-    dynamicRequireRoot
+    dynamicRequireRoot,
+    fileSystem
   );
   const isDynamicRequireModulesEnabled = dynamicRequireModules.size > 0;
 
@@ -104,7 +124,7 @@ export default function commonjs(options = {}) {
     };
   };
 
-  const { currentlyResolving, resolveId } = getResolveId(extensions, isPossibleCjsId);
+  const { currentlyResolving, resolveId } = getResolveId(extensions, isPossibleCjsId, fileSystem);
 
   const sourceMap = options.sourceMap !== false;
 
@@ -214,7 +234,8 @@ export default function commonjs(options = {}) {
       requireResolver = getRequireResolver(
         extensions,
         detectCyclesAndConditional,
-        currentlyResolving
+        currentlyResolving,
+        fileSystem
       );
     },
 
@@ -226,7 +247,7 @@ export default function commonjs(options = {}) {
             code: 'WRAPPED_IDS',
             ids: wrappedIds,
             message: `The commonjs plugin automatically wrapped the following files:\n[\n${wrappedIds
-              .map((id) => `\t${JSON.stringify(relative(process.cwd(), id))}`)
+              .map((id) => `\t${JSON.stringify(relative(cwd, id))}`)
               .join(',\n')}\n]`
           });
         } else {

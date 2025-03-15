@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign, no-shadow, no-underscore-dangle, no-continue */
 
-import { dirname } from 'path';
+import { dirname } from 'pathe';
 
 import { attachScopes, extractAssignedNames } from '@rollup/pluginutils';
 import { walk } from 'estree-walker';

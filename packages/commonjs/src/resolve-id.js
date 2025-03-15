@@ -1,7 +1,6 @@
 /* eslint-disable no-param-reassign, no-undefined */
 
-import { statSync } from 'fs';
-import { dirname, resolve, sep } from 'path';
+import { dirname, resolve, sep } from 'pathe';
 
 import {
   DYNAMIC_MODULES_ID,
@@ -30,7 +29,7 @@ function getCandidates(resolved, extensions) {
   );
 }
 
-export function resolveExtensions(importee, importer, extensions) {
+export function resolveExtensions(importee, importer, extensions, fileSystem) {
   // not our problem
   if (importee[0] !== '.' || !importer) return undefined;
 
@@ -39,7 +38,7 @@ export function resolveExtensions(importee, importer, extensions) {
 
   for (let i = 0; i < candidates.length; i += 1) {
     try {
-      const stats = statSync(candidates[i]);
+      const stats = fileSystem.statSync(candidates[i]);
       if (stats.isFile()) return { id: candidates[i] };
     } catch (err) {
       /* noop */
@@ -49,7 +48,7 @@ export function resolveExtensions(importee, importer, extensions) {
   return undefined;
 }
 
-export default function getResolveId(extensions, isPossibleCjsId) {
+export default function getResolveId(extensions, isPossibleCjsId, fileSystem) {
   const currentlyResolving = new Map();
 
   return {
@@ -131,7 +130,7 @@ export default function getResolveId(extensions, isPossibleCjsId) {
           importee,
           importer,
           Object.assign({ skipSelf: true }, resolveOptions)
-        )) || resolveExtensions(importee, importer, extensions);
+        )) || resolveExtensions(importee, importer, extensions, fileSystem);
       // Make sure that even if other plugins resolve again, we ignore our own proxies
       if (
         !resolved ||
