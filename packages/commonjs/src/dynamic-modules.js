@@ -1,6 +1,6 @@
 import { join, resolve, dirname } from 'pathe';
 
-import { globSync } from 'glob';
+import { fdir } from '@in-browser/fdir';
 
 import getCommonDir from './hacked-packages/commondir';
 
@@ -36,34 +36,25 @@ function isDirectory(path, fileSystem) {
 export function getDynamicRequireModules(patterns, dynamicRequireRoot, fileSystem) {
   const dynamicRequireModules = new Map();
   const dirNames = new Set();
-
-  if (!patterns || !fileSystem) {
-    return {
-      commonDir: null,
-      dynamicRequireModules
-    };
-  }
-
-  const patternsArray = Array.isArray(patterns) ? patterns : [patterns];
-
-  for (const pattern of patternsArray) {
+  for (const pattern of !patterns || Array.isArray(patterns) ? patterns || [] : [patterns]) {
     const isNegated = pattern.startsWith('!');
     const modifyMap = (targetPath, resolvedPath) =>
       isNegated
         ? dynamicRequireModules.delete(targetPath)
         : dynamicRequireModules.set(targetPath, resolvedPath);
-
-    const paths = globSync(isNegated ? pattern.substr(1) : pattern, {
-      fs: fileSystem
-    });
-    paths.sort((a, b) => a.localeCompare(b, 'en'));
-
-    for (const filePath of paths) {
-      const resolvedPath = resolve(filePath);
+    // eslint-disable-next-line new-cap
+    for (const path of new fdir({ fileSystem })
+      .withBasePath()
+      .withDirs()
+      .glob(isNegated ? pattern.substr(1) : pattern)
+      .crawl()
+      .sync()
+      .sort((a, b) => a.localeCompare(b, 'en'))) {
+      const resolvedPath = resolve(path);
       const requirePath = normalizePathSlashes(resolvedPath);
       if (isDirectory(resolvedPath, fileSystem)) {
         dirNames.add(resolvedPath);
-        const modulePath = resolve(join(resolvedPath, getPackageEntryPoint(filePath, fileSystem)));
+        const modulePath = resolve(join(resolvedPath, getPackageEntryPoint(path, fileSystem)));
         modifyMap(requirePath, modulePath);
         modifyMap(normalizePathSlashes(modulePath), modulePath);
       } else {

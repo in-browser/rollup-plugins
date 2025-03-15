@@ -1,6 +1,6 @@
 {
   "name": "@in-browser/rollup-plugin-commonjs",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "publishConfig": {
     "access": "public"
   },
@@ -62,9 +62,9 @@
     }
   },
   "dependencies": {
+    "@in-browser/fdir": "^1.0.0",
     "@in-browser/rollup-pluginutils": "^1.0.0",
     "estree-walker": "^2.0.2",
-    "glob": "^11.0.1",
     "is-reference": "1.2.1",
     "magic-string": "^0.30.3",
     "pathe": "^2.0.3",
