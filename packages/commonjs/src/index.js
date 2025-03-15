@@ -19,7 +19,7 @@
 
 import { dirname, extname, relative, resolve } from 'pathe';
 
-import { createFilter } from '@rollup/pluginutils';
+import { createFilter } from '@in-browser/rollup-pluginutils';
 
 import { peerDependencies, version } from '../package.json';
 

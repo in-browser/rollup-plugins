@@ -2,7 +2,7 @@
 
 import { dirname } from 'pathe';
 
-import { attachScopes, extractAssignedNames } from '@rollup/pluginutils';
+import { attachScopes, extractAssignedNames } from '@in-browser/rollup-pluginutils';
 import { walk } from 'estree-walker';
 import MagicString from 'magic-string';
 

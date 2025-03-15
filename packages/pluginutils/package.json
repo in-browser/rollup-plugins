@@ -1,6 +1,6 @@
 {
-  "name": "@rollup/pluginutils",
-  "version": "5.1.4",
+  "name": "@in-browser/rollup-pluginutils",
+  "version": "1.0.0",
   "publishConfig": {
     "access": "public"
   },

@@ -2,7 +2,7 @@
 
 import { basename, dirname, extname, relative } from 'pathe';
 
-import { createFilter, makeLegalIdentifier } from '@rollup/pluginutils';
+import { createFilter, makeLegalIdentifier } from '@in-browser/rollup-pluginutils';
 
 export function deconflict(scopes, globals, identifier) {
   let i = 1;
