@@ -573,9 +573,9 @@ importers:
 
   packages/replace:
     dependencies:
-      '@rollup/pluginutils':
-        specifier: ^5.0.1
-        version: 5.0.1(rollup@4.0.0-24)
+      '@in-browser/rollup-pluginutils':
+        specifier: ^1.0.0
+        version: 1.0.0(rollup@4.0.0-24)
       magic-string:
         specifier: ^0.30.3
         version: 0.30.3
