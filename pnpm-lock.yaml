@@ -439,9 +439,9 @@ importers:
 
   packages/json:
     dependencies:
-      '@rollup/pluginutils':
-        specifier: ^5.1.0
-        version: 5.1.0(rollup@4.0.0-24)
+      '@in-browser/rollup-pluginutils':
+        specifier: ^1.0.0
+        version: 1.0.0(rollup@4.0.0-24)
     devDependencies:
       '@rollup/plugin-buble':
         specifier: ^1.0.0
