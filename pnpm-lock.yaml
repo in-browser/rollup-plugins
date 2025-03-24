@@ -623,9 +623,9 @@ importers:
 
   packages/strip:
     dependencies:
-      '@rollup/pluginutils':
-        specifier: ^5.0.1
-        version: 5.0.1(rollup@4.0.0-24)
+      '@in-browser/rollup-pluginutils':
+        specifier: ^1.0.0
+        version: 1.0.0(rollup@4.0.0-24)
       estree-walker:
         specifier: ^2.0.2
         version: 2.0.2
