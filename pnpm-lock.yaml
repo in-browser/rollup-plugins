@@ -792,9 +792,9 @@ importers:
 
   packages/yaml:
     dependencies:
-      '@rollup/pluginutils':
-        specifier: ^5.0.1
-        version: 5.0.1(rollup@4.0.0-24)
+      '@in-browser/rollup-pluginutils':
+        specifier: ^1.0.0
+        version: 1.0.0(rollup@4.0.0-24)
       js-yaml:
         specifier: ^4.1.0
         version: 4.1.0
