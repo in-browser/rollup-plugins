@@ -8,6 +8,7 @@ interface RollupSucraseOptions
     | 'transforms'
     | 'jsxPragma'
     | 'jsxFragmentPragma'
+    | 'jsxRuntime'
     | 'enableLegacyTypeScriptModuleInterop'
     | 'enableLegacyBabel5ModuleInterop'
     | 'production'
@@ -25,6 +26,11 @@ interface RollupSucraseOptions
    * By default no files are ignored.
    */
   exclude?: FilterPattern;
+  /**
+   * FileSystem
+   */
+  fs: any;
+  cwd?: string;
 }
 
 /**

@@ -57,7 +57,8 @@ export default function sucrase(opts = {}) {
         filePath: id,
         sourceMapOptions: {
           compiledFilename: id
-        }
+        },
+        jsxRuntime: opts.jsxRuntime ?? 'classic'
       });
       return {
         code: result.code,
