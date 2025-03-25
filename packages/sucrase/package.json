@@ -1,6 +1,6 @@
 {
-  "name": "@rollup/plugin-sucrase",
-  "version": "5.0.2",
+  "name": "@in-browser/rollup-plugin-sucrase",
+  "version": "1.0.0",
   "publishConfig": {
     "access": "public"
   },
@@ -62,7 +62,8 @@
     }
   },
   "dependencies": {
-    "@rollup/pluginutils": "^5.0.1",
+    "@in-browser/rollup-pluginutils": "^1.0.0",
+    "pathe": "^2.0.3",
     "sucrase": "^3.27.0"
   },
   "devDependencies": {

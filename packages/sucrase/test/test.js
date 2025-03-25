@@ -1,4 +1,5 @@
 const path = require('path');
+const fs = require('fs');
 
 const test = require('ava');
 const { rollup } = require('rollup');
@@ -8,7 +9,9 @@ const alias = require('@rollup/plugin-alias');
 
 const { testBundle } = require('../../../util/test');
 
-const sucrase = require('..');
+const rawSucrase = require('..');
+
+const sucrase = (opts = {}) => rawSucrase({ ...opts, fs });
 
 require('source-map-support').install();
 

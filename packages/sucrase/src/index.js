@@ -1,10 +1,10 @@
-import fs from 'fs';
-import path from 'path';
+import pathe from 'pathe';
 
 import { transform } from 'sucrase';
-import { createFilter } from '@rollup/pluginutils';
+import { createFilter } from '@in-browser/rollup-pluginutils';
 
 export default function sucrase(opts = {}) {
+  const { fs, cwd } = opts;
   const filter = createFilter(opts.include, opts.exclude);
 
   return {
@@ -12,8 +12,13 @@ export default function sucrase(opts = {}) {
 
     // eslint-disable-next-line consistent-return
     resolveId(importee, importer) {
+      if (!fs) {
+        return;
+      }
+
       if (importer && /^[./]/.test(importee)) {
-        const resolved = path.resolve(importer ? path.dirname(importer) : process.cwd(), importee);
+        const finalCwd = typeof process === 'undefined' ? cwd ?? '/' : process.cwd();
+        const resolved = pathe.resolve(importer ? pathe.dirname(importer) : finalCwd, importee);
         // resolve in the same order that TypeScript resolves modules
         const resolvedFilenames = [
           `${resolved}.ts`,
@@ -32,6 +37,7 @@ export default function sucrase(opts = {}) {
         const resolvedFilename = resolvedFilenames.find((filename) => fs.existsSync(filename));
 
         if (resolvedFilename) {
+          // eslint-disable-next-line consistent-return
           return resolvedFilename;
         }
       }
